@@ -8,6 +8,7 @@ M.term = {
     winid = nil,
     bufid = nil,
     chanid = nil,
+last_win = nil,  -- Track the last active window before terminal
 }
 
 -- HELPERS
@@ -52,14 +53,18 @@ end
 
 local term_close = function()
     if M.term.winid == nil then return end
-    -- Store current window
     local curr_win = api.nvim_get_current_win()
+    
+    -- If we're in the terminal window and have a last window stored
+    if curr_win == M.term.winid and M.term.last_win ~= nil then
+        -- Switch to the last window before hiding terminal
+        api.nvim_set_current_win(M.term.last_win)
+    end
+    
     -- Hide the terminal window
     api.nvim_win_hide(M.term.winid)
     -- Reset window ID but keep other terminal state
     M.term.winid = nil
-    -- Return to original window
-    api.nvim_set_current_win(curr_win)
 end
 
 local term_toggle = function(filetype, config)
@@ -115,6 +120,7 @@ local term_toggle = function(filetype, config)
     M.term.opened = 1
     M.term.winid = win
     M.term.bufid = buf
+    M.term.last_win = orig_win
     -- Return to original window
     api.nvim_set_current_win(orig_win)
 end
