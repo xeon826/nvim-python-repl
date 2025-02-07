@@ -85,11 +85,6 @@ local term_toggle = function(filetype, config)
         local win = vim.api.nvim_get_current_win()
         vim.api.nvim_win_set_buf(win, M.term.bufid)
         M.term.winid = win
-        
-        -- Move cursor to the bottom of terminal
-        local line_count = vim.api.nvim_buf_line_count(M.term.bufid)
-        vim.api.nvim_win_set_cursor(win, {line_count, 0})
-        
         api.nvim_set_current_win(orig_win)
         return
     end
@@ -128,10 +123,6 @@ local term_toggle = function(filetype, config)
     M.term.bufid = buf
     M.term.last_win = orig_win
 
-    -- Move cursor to the bottom of terminal
-    local line_count = vim.api.nvim_buf_line_count(buf)
-    vim.api.nvim_win_set_cursor(win, {line_count, 0})
-    
     -- Return to original window
     api.nvim_set_current_win(orig_win)
 end
@@ -189,6 +180,8 @@ local send_message = function(filetype, message, config)
         term_toggle(filetype, config)
         M.term.opened = 1
     end
+    local line_count = vim.api.nvim_buf_line_count(M.term.bufid)
+    vim.api.nvim_win_set_cursor(M.term.winid, {line_count, 0})
     vim.wait(60)
     if filetype == "python" or filetype == "lua" then
         if vim.fn.has('win32') == 1 then
