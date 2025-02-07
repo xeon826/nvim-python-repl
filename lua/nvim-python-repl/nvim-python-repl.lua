@@ -63,6 +63,7 @@ local term_close = function()
     
     -- Hide the terminal window
     api.nvim_win_hide(M.term.winid)
+    M.term.opened = 0
     -- Reset window ID but keep other terminal state
     M.term.winid = nil
 end
