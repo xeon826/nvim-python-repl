@@ -55,8 +55,8 @@ function M.toggle_prompt()
     print("Spawn prompt=" .. tostring(not original))
 end
 
-function M.open_repl()
-    repl.open_repl(M)
+function M.toggle_repl()
+    repl.toggle_repl(M)
 end
 
 return M
