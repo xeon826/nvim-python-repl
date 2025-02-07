@@ -92,7 +92,7 @@ local term_toggle = function(filetype, config)
     else
         api.nvim_command('split')
     end
-    local buf = vim.api.nvim_create_buf(true, true)
+    local buf = vim.api.nvim_create_buf(false, true)
     local win = vim.api.nvim_get_current_win()
     vim.api.nvim_win_set_buf(win, buf)
     local choice = ''
@@ -121,6 +121,7 @@ local term_toggle = function(filetype, config)
     M.term.winid = win
     M.term.bufid = buf
     M.term.last_win = orig_win
+
     -- Return to original window
     api.nvim_set_current_win(orig_win)
 end
