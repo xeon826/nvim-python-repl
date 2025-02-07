@@ -12,7 +12,7 @@ command! SendPyBuffer              lua require("nvim-python-repl").send_buffer_t
 command! ToggleExecuteOnSend       lua require("nvim-python-repl").toggle_execute()
 command! ReplToggleVertical        lua require("nvim-python-repl").toggle_vertical()
 command! ReplTogglePrompt          lua require("nvim-python-repl").toggle_prompt()
-command! ReplOpen                  lua require("nvim-python-repl").open_repl()
+command! ReplToggle                lua require("nvim-python-repl").toggle_repl()
 command! SendCell                  lua require("nvim-python-repl").send_current_cell_to_repl()
 " Remove default mappings
 " nnoremap <silent> <leader>n :SendPyObject<CR>

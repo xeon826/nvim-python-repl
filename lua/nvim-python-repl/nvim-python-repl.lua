@@ -50,9 +50,38 @@ local get_statement_definition = function(filetype)
     return node
 end
 
-local term_open = function(filetype, config)
+local term_close = function()
+    if M.term.winid == nil then return end
+    -- Store current window
+    local curr_win = api.nvim_get_current_win()
+    -- Hide the terminal window
+    api.nvim_win_hide(M.term.winid)
+    -- Reset window ID but keep other terminal state
+    M.term.winid = nil
+    -- Return to original window
+    api.nvim_set_current_win(curr_win)
+end
+
+local term_toggle = function(filetype, config)
     local orig_win = vim.api.nvim_get_current_win()
-    if M.term.chanid ~= nil then return end
+    -- If terminal exists and window is visible, hide it
+    if M.term.winid ~= nil then
+        term_close()
+        return
+    end
+    -- If terminal exists but window is hidden, show it
+    if M.term.chanid ~= nil and M.term.bufid ~= nil then
+        if config.vsplit then
+            api.nvim_command('vsplit')
+        else
+            api.nvim_command('split')
+        end
+        local win = vim.api.nvim_get_current_win()
+        vim.api.nvim_win_set_buf(win, M.term.bufid)
+        M.term.winid = win
+        api.nvim_set_current_win(orig_win)
+        return
+    end
     if config.vsplit then
         api.nvim_command('vsplit')
     else
@@ -88,6 +117,18 @@ local term_open = function(filetype, config)
     M.term.bufid = buf
     -- Return to original window
     api.nvim_set_current_win(orig_win)
+end
+
+local term_close = function()
+    if M.term.winid == nil then return end
+    -- Store current window
+    local curr_win = api.nvim_get_current_win()
+    -- Hide the terminal window
+    api.nvim_win_hide(M.term.winid)
+    -- Reset window ID but keep other terminal state
+    M.term.winid = nil
+    -- Return to original window
+    api.nvim_set_current_win(curr_win)
 end
 
 -- CONSTRUCTING MESSAGE
@@ -140,7 +181,7 @@ end
 
 local send_message = function(filetype, message, config)
     if M.term.opened == 0 then
-        term_open(filetype, config)
+        term_toggle(filetype, config)
     end
     vim.wait(60)
     if filetype == "python" or filetype == "lua" then
@@ -233,9 +274,9 @@ M.send_buffer_to_repl = function(config)
     send_message(filetype, concat_message, config)
 end
 
-M.open_repl = function(config)
+M.toggle_repl = function(config)
     local filetype = vim.bo.filetype
-    term_open(filetype, config)
+    term_toggle(filetype, config)
 end
 
 return M
