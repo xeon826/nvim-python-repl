@@ -119,18 +119,6 @@ local term_toggle = function(filetype, config)
     api.nvim_set_current_win(orig_win)
 end
 
-local term_close = function()
-    if M.term.winid == nil then return end
-    -- Store current window
-    local curr_win = api.nvim_get_current_win()
-    -- Hide the terminal window
-    api.nvim_win_hide(M.term.winid)
-    -- Reset window ID but keep other terminal state
-    M.term.winid = nil
-    -- Return to original window
-    api.nvim_set_current_win(curr_win)
-end
-
 -- CONSTRUCTING MESSAGE
 local construct_message_from_selection = function(start_row, start_col, end_row, end_col)
     local bufnr = api.nvim_get_current_buf()
